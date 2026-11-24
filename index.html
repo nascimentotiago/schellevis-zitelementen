@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zitelementen – productbeelden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { background:#EDEDEB; color:#282826; font-family:Inter, system-ui, sans-serif; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1440px; margin:0 auto; padding:72px 48px 96px; }
+  .logo { display:block; height:40px; width:auto; margin-bottom:68px; }
+  h1 { font-size:22px; font-weight:600; letter-spacing:-0.01em; }
+  .sub { color:#78786f; font-size:17px; margin-top:8px; }
+  .grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:32px; margin-top:20px; }
+  figure img { width:100%; aspect-ratio:4/5; object-fit:cover; display:block; border-radius:18px; background:#d9d9d6; }
+  .zoomtile { position:relative; aspect-ratio:4/5; border-radius:18px; overflow:hidden; background:#d9d9d6; }
+  .zoomtile img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:0; aspect-ratio:auto; }
+  .zoomtile .full { transform-origin:0 0; transition:transform 1s linear(0.0000, 0.0024, 0.0094, 0.0209, 0.0365, 0.0560, 0.0791, 0.1055, 0.1347, 0.1666, 0.2006, 0.2364, 0.2737, 0.3121, 0.3513, 0.3909, 0.4306, 0.4701, 0.5093, 0.5477, 0.5851, 0.6215, 0.6565, 0.6901, 0.7220, 0.7522, 0.7807, 0.8072, 0.8319, 0.8546, 0.8754, 0.8943, 0.9114, 0.9266, 0.9400, 0.9518, 0.9619, 0.9706, 0.9779, 0.9838, 0.9886, 0.9924, 0.9952, 0.9972, 0.9986, 0.9994, 0.9998, 1.0000, 1.0000);   /* gentle start, fast middle, long soft settle (no abrupt stop) */ }
+  .zoomtile .detail { opacity:0; transition:opacity .2s ease; }
+  .zoomtile:hover .detail { opacity:1; }
+  @media (hover:none) { .zoomtile .detail { opacity:1; } }
+  .swapstack { position:relative; aspect-ratio:4/5; border-radius:18px; overflow:hidden; background:#d9d9d6; }
+  .swapstack img { position:absolute; inset:0; width:100%; height:100%; border-radius:0; opacity:0; transition:opacity .25s ease; }
+  .swapstack img.on { opacity:1; }
+  figcaption.row { display:flex; justify-content:space-between; align-items:flex-start; gap:12px; }
+  .swatches { position:absolute; right:16px; bottom:16px; z-index:2; display:flex; gap:7px; padding:6px 8px; border-radius:999px; background:rgba(255,255,255,.55); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .sw { width:16px; height:16px; border-radius:50%; border:0; padding:0; background:var(--c); cursor:pointer;
+        box-shadow:0 0 0 2px rgba(255,255,255,.9), 0 0 0 3px transparent; transition:box-shadow .15s; }
+  .sw.on { box-shadow:0 0 0 2px rgba(255,255,255,.9), 0 0 0 3.5px #282826; }
+  .tile3d { position:relative; aspect-ratio:4/5; border-radius:18px; overflow:hidden;
+            background:linear-gradient(to bottom, rgb(127,126,120) 0%, rgb(153,153,149) 22%, rgb(185,183,180) 45%,
+            rgb(205,203,200) 60%, rgb(221,220,216) 75%, rgb(228,226,224) 90%, rgb(228,227,225) 100%); }
+  .tile3d canvas { display:block; width:100%; height:100%; }
+  #tile3d canvas { filter: contrast(0.79) brightness(1.14); }   /* tone-match the live bench to the Cycles tiles (fitted per face) */
+  figcaption { padding:16px 2px 0; }
+  .name { font-size:17px; font-weight:500; }
+  .meta { font-size:14px; color:#78786f; margin-top:4px; }
+  .stage { position:relative; width:100%; aspect-ratio:1390/1200; max-height:100vh; overflow:hidden;
+           background:linear-gradient(to bottom, rgb(127,126,120) 0%, rgb(153,153,149) 22%, rgb(185,183,180) 45%,
+           rgb(205,203,200) 60%, rgb(221,220,216) 75%, rgb(228,226,224) 90%, rgb(228,227,225) 100%); }
+  canvas { display:block; width:100%; height:100%; cursor:grab; touch-action:pan-y; }
+  canvas:active { cursor:grabbing; }
+  .loading { position:absolute; inset:0; display:grid; place-items:center; color:rgba(40,40,38,.6); font-size:14px; }
+  .variants { gap:2px; padding:3px; }
+  .vt { border:0; background:transparent; font:500 12px/1 Inter, system-ui, sans-serif; color:#282826; padding:6px 10px; border-radius:999px; cursor:pointer; opacity:.6; transition:background .15s, opacity .15s; }
+  .vt.on { background:rgba(255,255,255,.9); opacity:1; }
+  /* click-to-open overlay with high-res images (tiles with data-hires) */
+  [data-hires] { cursor:zoom-in; }  .swatches { cursor:default; }
+  .lb { position:fixed; inset:0; z-index:50; background:#EDEDEB; opacity:0; pointer-events:none; transition:opacity .2s ease; }
+  .lb.open { opacity:1; pointer-events:auto; }
+  .lb-scroll { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; padding:32px 32px 60px; overflow:hidden; }
+  .lb-img { display:block; max-width:100%; max-height:100%; border-radius:18px; cursor:zoom-in; user-select:none; -webkit-user-drag:none; }
+  .lb.zoom .lb-scroll { display:block; padding:0; overflow:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+  .lb.zoom .lb-scroll::-webkit-scrollbar { display:none; }
+  .lb.zoom .lb-img { max-width:none; max-height:none; border-radius:0; cursor:zoom-out; }   /* zoom-out cursor: the next click closes */
+  .lb-dots { position:absolute; left:50%; bottom:20px; transform:translateX(-50%); z-index:2; display:flex; gap:9px; padding:7px 10px; border-radius:999px;
+             background:rgba(255,255,255,.55); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px); }
+  .lb-dot { width:9px; height:9px; border-radius:50%; border:0; padding:0; background:#282826; opacity:.25; cursor:pointer; transition:opacity .15s; }
+  .lb-dot.on { opacity:.85; }
+  @media (max-width:900px) { .grid { grid-template-columns:repeat(2, 1fr); gap:20px; } .wrap { padding:40px 20px 64px; } .stage { aspect-ratio:4/5; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <img class="logo" src="img/schellevis_logo.png" alt="Schellevis">
+
+  <div class="grid">
+    <figure><div class="zoomtile" style="--t:translate(-24.55%,-88.44%) scale(2.597)" data-hires="img/hires/zit100_sokkel_full.jpg img/hires/zit100_sokkel_detail.jpg"><img class="full" src="img/zit100_sokkel_full.jpg" alt="Zitelement op sokkel"><img class="detail" src="img/zit100_sokkel_detail.jpg" alt="Zitelement op sokkel, detail"><div class="swatches variants" role="radiogroup" aria-label="Variant"><button class="vt on" data-name="Zitelement op sokkel" data-meta="Scherpe randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg" data-full="img/zit100_sokkel_full.jpg" data-detail="img/zit100_sokkel_detail.jpg" data-hires="img/hires/zit100_sokkel_full.jpg img/hires/zit100_sokkel_detail.jpg">Scherp</button><button class="vt" data-name="Zitelement op sokkel" data-meta="Afgeronde randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg" data-full="img/zit100_sokkel_round_full.jpg" data-detail="img/zit100_sokkel_round_detail.jpg" data-hires="img/hires/zit100_sokkel_round_full.jpg img/hires/zit100_sokkel_round_detail.jpg">Rond</button><button class="vt" data-name="Zitelement" data-meta="Afgeronde randen · 100×60×40 cm · 520 kg" data-full="img/zit100_round_floor_full.jpg" data-detail="img/zit100_round_floor_detail.jpg" data-hires="img/hires/zit100_round_floor_full.jpg img/hires/zit100_round_floor_detail.jpg">Grond</button></div></div><figcaption><div class="name">Zitelement op sokkel</div><div class="meta">Scherpe randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg</div></figcaption></figure>
+    <figure><div class="zoomtile" style="--t:translate(-73.33%,-96.33%) scale(3.333)" data-hires="img/hires/rond60_full.jpg img/hires/rond60_detail.jpg"><img class="full" src="img/rond60_full.jpg" alt="Rond zitelement 60"><img class="detail" src="img/rond60_detail.jpg" alt="Rond zitelement 60, detail"></div><figcaption><div class="name">Rond zitelement</div><div class="meta">Ø60×40 cm</div></figcaption></figure>
+    <figure class="colortile">
+      <div class="swapstack" data-hires="img/hires/kubus.jpg img/hires/kubus_antraciet.jpg img/hires/kubus_carbon.jpg img/hires/kubus_creme.jpg img/hires/kubus_roodbruin.jpg img/hires/kubus_taupe.jpg">
+        <img class="on" data-c="grijs" src="img/kubus.jpg" alt="Kubus 50x50x50, grijs">
+        <img data-c="antraciet" src="img/kubus_antraciet.jpg" alt="Kubus 50x50x50, antraciet">
+        <img data-c="carbon" src="img/kubus_carbon.jpg" alt="Kubus 50x50x50, carbon">
+        <img data-c="creme" src="img/kubus_creme.jpg" alt="Kubus 50x50x50, crème">
+        <img data-c="roodbruin" src="img/kubus_roodbruin.jpg" alt="Kubus 50x50x50, roodbruin">
+        <img data-c="taupe" src="img/kubus_taupe.jpg" alt="Kubus 50x50x50, taupe">
+        <div class="swatches" role="radiogroup" aria-label="Kleur">
+          <button class="sw on" data-c="grijs" data-n="Grijs" style="--c:#9b9893" aria-label="Grijs"></button>
+          <button class="sw" data-c="antraciet" data-n="Antraciet" style="--c:#5f5f60" aria-label="Antraciet"></button>
+          <button class="sw" data-c="carbon" data-n="Carbon" style="--c:#2f2f30" aria-label="Carbon"></button>
+          <button class="sw" data-c="creme" data-n="Crème" style="--c:#ddd2c6" aria-label="Crème"></button>
+          <button class="sw" data-c="roodbruin" data-n="Roodbruin" style="--c:#7f5446" aria-label="Roodbruin"></button>
+          <button class="sw" data-c="taupe" data-n="Taupe" style="--c:#635852" aria-label="Taupe"></button>
+        </div>
+      </div>
+      <figcaption><div class="name">Kubus</div><div class="meta"><span class="cname">Grijs</span> · 50×50×50 cm · 280 kg</div></figcaption>
+    </figure>
+    <figure><div class="zoomtile" data-hires="img/hires/curve200.jpg" data-thumbs="img/curve200.jpg"><img class="full" src="img/curve200.jpg" alt="Curve bank"><img class="detail" src="img/curve200_situ.jpg" alt="Curve bank in een tuin"></div><figcaption><div class="name">Curve bank</div><div class="meta">200×60×47,3 cm</div></figcaption></figure>
+    <figure><div class="zoomtile" data-hires="img/hires/slabstair.jpg" data-thumbs="img/slabstair.jpg"><img class="full" src="img/slab.jpg" alt="Grootformaat tegel 120x120x12"><img class="detail" src="img/slabstair.jpg" alt="Grootformaat tegels als zwevende tuintrap"></div><figcaption><div class="name">Grootformaat tegel</div><div class="meta">120×120×12 cm · 384 kg</div></figcaption></figure>
+    <figure><div class="tile3d" id="tile3d" aria-label="Zitelement 200x60x40"></div><figcaption><div class="name">Zitelement</div><div class="meta">200×60×40 cm · 1040 kg</div></figcaption></figure>
+  </div>
+
+</div>
+<div class="stage" id="stage"><div class="loading" id="loading">3D-model laden…</div></div>
+
+<div class="lb" id="lb" aria-hidden="true">
+  <div class="lb-scroll"><img class="lb-img" alt=""></div>
+  <div class="lb-dots"></div>
+</div>
+<script>
+document.querySelectorAll('.variants').forEach(g => {   // placement switch (sokkel / grond): swaps the tile images and its overlay set
+  const tile = g.closest('.zoomtile'), full = tile.querySelector('.full'), det = tile.querySelector('.detail');
+  g.querySelectorAll('.vt').forEach(b => {
+    [b.dataset.full, b.dataset.detail].forEach(u => { const i = new Image(); i.src = u; });
+    b.addEventListener('click', e => { e.stopPropagation();
+      g.querySelectorAll('.vt').forEach(x => x.classList.toggle('on', x === b));
+      full.src = b.dataset.full; det.src = b.dataset.detail; tile.dataset.hires = b.dataset.hires;
+      const cap = tile.closest('figure').querySelector('figcaption');
+      if (b.dataset.name) cap.querySelector('.name').textContent = b.dataset.name;
+      if (b.dataset.meta) cap.querySelector('.meta').textContent = b.dataset.meta; });
+  });
+});
+(() => {   // overlay: click a tile with data-hires -> big view; click the image for 100% (pan with the mouse); click again, Esc or the grey closes
+  // data-hires: high-res images in order; data-thumbs (optional): matching thumbnails, else the tile's own <img>s
+  const lb = document.getElementById('lb'), sc = lb.querySelector('.lb-scroll'), im = lb.querySelector('.lb-img'),
+        dotBox = lb.querySelector('.lb-dots');
+  let set = [], idx = 0, seq = 0, dots = [];
+  const show = i => {
+    idx = (i + set.length) % set.length; unzoom();
+    im.src = set[idx].thumb; im.alt = set[idx].alt;
+    const token = ++seq, hi = new Image(); hi.src = set[idx].hi;       // thumbnail first, high-res as soon as it is decoded
+    const swap = () => { if (token === seq && im.src !== hi.src) im.src = hi.src; };
+    hi.onload = swap; hi.decode().then(swap).catch(() => {});   // load event as fallback: decode() can stall in background tabs
+    dots.forEach((d, j) => d.classList.toggle('on', j === idx));
+  };
+  const open = (tile) => {
+    const his = tile.dataset.hires.split(/\s+/), imgs = [...tile.querySelectorAll(':scope > img')];
+    const thumbs = tile.dataset.thumbs ? tile.dataset.thumbs.split(/\s+/) : imgs.map(t => t.currentSrc || t.src);
+    set = his.map((h, j) => ({ hi: h, thumb: thumbs[j] || h, alt: (imgs[j] || imgs[0] || {}).alt || '' }));
+    dotBox.innerHTML = ''; dots = [];
+    if (set.length > 1) set.forEach((_, j) => { const b = document.createElement('button'); b.className = 'lb-dot';
+      b.setAttribute('aria-label', set[j].alt); b.addEventListener('click', () => show(j)); dotBox.appendChild(b); dots.push(b); });
+    dotBox.style.display = set.length > 1 ? '' : 'none';
+    let start = 0;                                                    // open on what the tile shows right now
+    const on = imgs.findIndex(t => t.classList.contains('on'));
+    if (on >= 0) start = on;                                          // colour stack: the selected colour
+    else if (set.length === 2 && imgs.length === 2 && (matchMedia('(hover:none)').matches || tile.matches(':hover'))) start = 1;
+    show(start);
+    lb.classList.add('open'); lb.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden';
+  };
+  const close = () => { lb.classList.remove('open'); lb.setAttribute('aria-hidden', 'true'); document.body.style.overflow = ''; unzoom(); };
+  function unzoom() { lb.classList.remove('zoom'); im.style.width = im.style.height = ''; }
+  const zoomAt = (cx, cy) => {
+    const r = im.getBoundingClientRect(), fx = (cx - r.left) / r.width, fy = (cy - r.top) / r.height;
+    const w = im.naturalWidth / (window.devicePixelRatio || 1), h = im.naturalHeight / (window.devicePixelRatio || 1);
+    if (w <= r.width * 1.05) return close();                          // nothing to zoom into: just close
+    lb.classList.add('zoom'); im.style.width = w + 'px'; im.style.height = h + 'px';
+    sc.scrollLeft = fx * w - cx; sc.scrollTop = fy * h - cy;
+  };
+  document.querySelectorAll('[data-hires]').forEach(t => t.addEventListener('click', e => { if (!e.target.closest('.swatches')) open(t); }));
+  im.addEventListener('click', e => { e.stopPropagation(); lb.classList.contains('zoom') ? close() : zoomAt(e.clientX, e.clientY); });   // open -> zoom -> close
+  sc.addEventListener('click', e => { if (e.target === sc) close(); });
+  sc.addEventListener('mousemove', e => {                             // desktop: the image follows the mouse while zoomed
+    if (!lb.classList.contains('zoom')) return;
+    sc.scrollLeft = (e.clientX / sc.clientWidth) * (sc.scrollWidth - sc.clientWidth);
+    sc.scrollTop = (e.clientY / sc.clientHeight) * (sc.scrollHeight - sc.clientHeight);
+  });
+  addEventListener('keydown', e => {
+    if (!lb.classList.contains('open')) return;
+    if (e.key === 'Escape') close(); else if (e.key === 'ArrowRight') show(idx + 1); else if (e.key === 'ArrowLeft') show(idx - 1);
+  });
+})();
+</script>
+
+<script>
+document.querySelectorAll('.colortile').forEach(t => t.querySelectorAll('.sw').forEach(b => b.addEventListener('click', () => {
+  t.querySelectorAll('.sw').forEach(x => x.classList.toggle('on', x === b));
+  t.querySelectorAll('.swapstack img').forEach(i => i.classList.toggle('on', i.dataset.c === b.dataset.c));
+  t.querySelector('.cname').textContent = b.dataset.n;
+})));
+</script>
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const stage = document.getElementById('stage');
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.outputColorSpace = THREE.SRGBColorSpace;
+renderer.toneMapping = THREE.AgXToneMapping;
+renderer.toneMappingExposure = 2.4;   // matched to the Cycles stills
+stage.prepend(renderer.domElement);
+
+const scene = new THREE.Scene();
+
+// lighting and the floor shadow are baked in Cycles (same studio as the renders); nothing is lit live
+
+// cameras: parallel (orthographic) like the renders, or perspective
+const target = new THREE.Vector3(0, 0.2, 0);
+const homeDir = new THREE.Vector3(Math.sin(THREE.MathUtils.degToRad(28)) * Math.cos(THREE.MathUtils.degToRad(30)),
+                                  Math.sin(THREE.MathUtils.degToRad(30)),
+                                  Math.cos(THREE.MathUtils.degToRad(28)) * Math.cos(THREE.MathUtils.degToRad(30)));
+const ortho = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 100);
+const persp = new THREE.PerspectiveCamera(30, 1, 0.01, 100);
+let camera = ortho, controls;
+// fixed framing: measure the bench's projected size from the home view, then keep it ~70% of the width
+
+let projW = 2, projH = 1;
+{
+  const m = new THREE.Matrix4().lookAt(homeDir, new THREE.Vector3(), new THREE.Vector3(0, 1, 0)).invert();
+  const xs = [], ys = [];
+  for (const x of [-1, 1]) for (const y of [0, 0.473]) for (const z of [-0.3, 0.343]) {
+    const p = new THREE.Vector3(x, y, z).applyMatrix4(m); xs.push(p.x); ys.push(p.y);
+  }
+  projW = Math.max(...xs) - Math.min(...xs); projH = Math.max(...ys) - Math.min(...ys);
+}
+
+function size() {
+  const w = stage.clientWidth, h = stage.clientHeight, a = w / h;
+  renderer.setSize(w, h, false);
+  const H = Math.max(projH / 0.5, projW / 0.70 / a);
+  ortho.left = -H * a / 2; ortho.right = H * a / 2; ortho.top = H / 2; ortho.bottom = -H / 2;
+  ortho.updateProjectionMatrix();
+  persp.aspect = a; persp.updateProjectionMatrix();
+}
+function home(cam) {
+  cam.position.copy(target).addScaledVector(homeDir, cam.isOrthographicCamera ? 20 : 3.9);
+  if (cam.isOrthographicCamera) cam.zoom = 1;
+  cam.lookAt(target); cam.updateProjectionMatrix();
+}
+function useCamera(cam) {
+  camera = cam;
+  if (controls) controls.dispose();
+  controls = new OrbitControls(camera, renderer.domElement);
+  controls.target.copy(target);
+  controls.enableDamping = true; controls.dampingFactor = 0.08;
+  controls.screenSpacePanning = true;
+  controls.maxPolarAngle = THREE.MathUtils.degToRad(88);   // never below the floor
+  controls.enableZoom = false;   // fixed zoom; the mouse wheel scrolls the page
+  controls.update();
+}
+size(); home(ortho); home(persp); useCamera(ortho);
+addEventListener('resize', size);
+new ResizeObserver(size).observe(stage);
+
+// concrete: textures baked from the same procedural material used for the renders (1 tile = 50 cm)
+const tl = new THREE.TextureLoader();
+const color = tl.load('tex/scan_grijs_2412.jpg'); color.colorSpace = THREE.SRGBColorSpace;   // Schellevis scan, 240 x 120 cm
+const normal = tl.load('tex/concrete_normal.jpg');
+for (const t of [color, normal]) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.anisotropy = renderer.capabilities.getMaxAnisotropy(); }
+const meta = await (await fetch('tex/bake_meta.json')).json();
+const light = tl.load('tex/zit200_light.png'); light.colorSpace = THREE.SRGBColorSpace; light.channel = 1; light.flipY = true;
+// albedo detail x baked irradiance  ->  same result as the Cycles material, view-independent (matte)
+const concrete = new THREE.MeshBasicMaterial({ map: color, color: new THREE.Color(0.42, 0.42, 0.42), lightMap: light, lightMapIntensity: meta.lightmapScale * 0.185 / 0.2 });
+const TEX_U = 2.4, TEX_V = 1.2;   // scan covers 240 x 120 cm; the 200 cm bench fits without repeating
+
+// box-projected UVs in metres so pores keep their real size on every face
+function boxUV(geo) {
+  const p = geo.attributes.position, n = geo.attributes.normal, uv = new Float32Array(p.count * 2);
+  for (let i = 0; i < p.count; i++) {
+    const ax = Math.abs(n.getX(i)), ay = Math.abs(n.getY(i)), az = Math.abs(n.getZ(i));
+    let u, v;
+    if (ay >= ax && ay >= az) { u = p.getX(i); v = p.getZ(i); }
+    else if (ax >= az) { u = p.getZ(i); v = p.getY(i); }
+    else { u = p.getX(i); v = p.getY(i); }
+    uv[i * 2] = u / TEX_U + 0.5; uv[i * 2 + 1] = v / TEX_V + 0.5;
+  }
+  geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+}
+
+// Zitelement 200x60x40 cm at true size (metres), 1.5 mm rounded arris as in the renders
+const mesh = await (await fetch('model/zit200.json')).json();
+const geo = new THREE.BufferGeometry();
+geo.setAttribute('position', new THREE.Float32BufferAttribute(mesh.position, 3));
+geo.setAttribute('normal', new THREE.Float32BufferAttribute(mesh.normal, 3));
+geo.setAttribute('uv1', new THREE.Float32BufferAttribute(mesh.uv1, 2));
+boxUV(geo);
+// per-face tone match against the Cycles tiles (linear multipliers): top, long front face, end face
+{
+  const n = geo.attributes.normal, col = new Float32Array(n.count * 3);
+  for (let i = 0; i < n.count; i++) {
+    const nx = n.getX(i), ny = n.getY(i), nz = n.getZ(i);
+    const f = ny > 0.7 ? 1.16 : nz > 0.7 ? 0.43 : nx > 0.7 ? 0.73 : 1.0;   // refitted 2026-11-20 to the new-look still (out/post/zit200_finished.png)
+    col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = f;
+  }
+  geo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+}
+concrete.vertexColors = true;
+scene.add(new THREE.Mesh(geo, concrete));
+
+// baked floor shadow: black, alpha = shadow strength, multiplies the gradient behind the canvas
+const shadowTex = tl.load('tex/floor_shadow.png');
+const floorMat = new THREE.MeshBasicMaterial({ color: 0x000000, alphaMap: shadowTex, transparent: true, opacity: 0.6, depthWrite: false });
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(meta.floorW, meta.floorD), floorMat);
+floor.rotation.x = -Math.PI / 2; floor.position.y = 0.0005; floor.renderOrder = -1;
+scene.add(floor);
+
+// ---- bottom viewer: Curve bank (client FBX geometry), its own baked lightmap + floor shadow
+const viewScene = new THREE.Scene();
+{
+  const cmeta = await (await fetch('tex/curve200_meta.json')).json();
+  const cmesh = await (await fetch('model/curve200.json')).json();
+  const cl = tl.load('tex/curve200_light.png'); cl.colorSpace = THREE.SRGBColorSpace; cl.channel = 1;
+  const cgeo = new THREE.BufferGeometry();
+  cgeo.setAttribute('position', new THREE.Float32BufferAttribute(cmesh.position, 3));
+  cgeo.setAttribute('normal', new THREE.Float32BufferAttribute(cmesh.normal, 3));
+  cgeo.setAttribute('uv1', new THREE.Float32BufferAttribute(cmesh.uv1, 2));
+  boxUV(cgeo);
+  // per-orientation tone match to the Cycles still (smooth by normal, the bench front is curved): top, front (+z), end (+x)
+  const CT = [2.03, 0.92, 1.42];   // fitted 2026-11-20 to out/post/curve200_finished.png (top, front, end)
+  { const n = cgeo.attributes.normal, col = new Float32Array(n.count * 3);
+    for (let i = 0; i < n.count; i++) {
+      const wy = Math.max(n.getY(i), 0) ** 2, wz = n.getZ(i) ** 2, wx = n.getX(i) ** 2, ws = wy + wz + wx || 1;
+      const f = (CT[0] * wy + CT[1] * wz + CT[2] * wx) / ws; col[i * 3] = col[i * 3 + 1] = col[i * 3 + 2] = f; }
+    cgeo.setAttribute('color', new THREE.BufferAttribute(col, 3)); }
+  // grey 0.42 x DARK 0.85, as in the curve bank still
+  const cmat = new THREE.MeshBasicMaterial({ map: color, color: new THREE.Color(0.357, 0.357, 0.357), lightMap: cl, vertexColors: true, lightMapIntensity: cmeta.lightmapScale * 0.185 / 0.2 });
+  viewScene.add(new THREE.Mesh(cgeo, cmat));
+  const cf = new THREE.Mesh(new THREE.PlaneGeometry(cmeta.floorW, cmeta.floorD),
+    new THREE.MeshBasicMaterial({ color: 0x000000, alphaMap: tl.load('tex/curve200_floor.png'), transparent: true, opacity: 0.55, depthWrite: false }));
+  cf.rotation.x = -Math.PI / 2; cf.position.y = 0.0005; cf.renderOrder = -1; viewScene.add(cf);
+}
+document.getElementById('loading').remove();
+
+
+// ---- Zitelement tile: same baked scene, parallel camera framed like the still; hover = subtle camera move
+{
+  const el = document.getElementById('tile3d');
+  const TILE_EXPOSURE = 3.25;   // matched to the Cycles tiles (face-by-face)
+  const r2 = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  r2.setPixelRatio(Math.min(devicePixelRatio, 2));
+  r2.outputColorSpace = THREE.SRGBColorSpace; r2.toneMapping = THREE.AgXToneMapping; r2.toneMappingExposure = TILE_EXPOSURE;   // matched to the Cycles stills next to it
+  el.appendChild(r2.domElement);
+  const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 100);
+  const FRAME_H = 4.128;                       // metres of scene height in the 4:5 still (Blender ortho scale)
+  const A0 = { az: 28, el: 30 }, A1 = { az: 52, el: 16 };   // stronger swing right + lower
+  let p = 0, from = 0, to = 0, t0 = 0, anim = false;
+  const DUR = 700, ease = x => 1 - Math.pow(1 - x, 5);   // snappy start, long inertial settle at the end
+  const ZOOM_H = 3.0;                           // hover: frame tightens (~27%)
+  let aspect = 0.8;
+  function frustum(k) { const H = FRAME_H + (ZOOM_H - FRAME_H) * k; cam.top = H / 2; cam.bottom = -H / 2; cam.left = -H * aspect / 2; cam.right = H * aspect / 2; cam.updateProjectionMatrix(); }
+  function place(k) {
+    frustum(k);
+    const az = THREE.MathUtils.degToRad(A0.az + (A1.az - A0.az) * k), elv = THREE.MathUtils.degToRad(A0.el + (A1.el - A0.el) * k);
+    cam.position.set(Math.sin(az) * Math.cos(elv), Math.sin(elv), Math.cos(az) * Math.cos(elv)).multiplyScalar(20).add(target);
+    cam.lookAt(target);
+  }
+  function fit() {
+    const w = el.clientWidth, h = el.clientHeight; aspect = w / h;
+    r2.setSize(w, h, false); frustum(p); r2.render(scene, cam);
+  }
+  function loop(now) {
+    const k = Math.min(1, (now - t0) / (DUR * Math.max(Math.abs(to - from), 0.01)));
+    p = from + (to - from) * ease(k); place(p); r2.render(scene, cam);
+    if (k < 1) requestAnimationFrame(loop); else anim = false;
+  }
+  function go(v) { from = p; to = v; t0 = performance.now(); if (!anim) { anim = true; requestAnimationFrame(loop); } }
+  place(0); new ResizeObserver(fit).observe(el); fit();
+  el.addEventListener('mouseenter', () => go(1));
+  el.addEventListener('mouseleave', () => go(0));
+  // re-render once textures have arrived
+  THREE.DefaultLoadingManager.onLoad = () => r2.render(scene, cam);
+  setTimeout(() => r2.render(scene, cam), 1500);
+}
+
+renderer.setAnimationLoop(() => { controls.update(); renderer.render(viewScene, camera); });
+</script>
+
+</body>
+</html>
