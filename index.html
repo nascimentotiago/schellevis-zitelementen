@@ -33,7 +33,7 @@
             background:linear-gradient(to bottom, rgb(127,126,120) 0%, rgb(153,153,149) 22%, rgb(185,183,180) 45%,
             rgb(205,203,200) 60%, rgb(221,220,216) 75%, rgb(228,226,224) 90%, rgb(228,227,225) 100%); }
   .tile3d canvas { display:block; width:100%; height:100%; }
-  #tile3d canvas { filter: contrast(0.79) brightness(1.14); }   /* tone-match the live bench to the Cycles tiles (fitted per face) */
+  #tile3d canvas, #tile3d_v2 canvas { filter: contrast(0.79) brightness(1.14); }   /* tone-match the live bench to the Cycles tiles (fitted per face) */
   figcaption { padding:16px 2px 0; }
   .name { font-size:17px; font-weight:500; }
   .meta { font-size:14px; color:#78786f; margin-top:4px; }
@@ -60,13 +60,23 @@
   .lb-dot { width:9px; height:9px; border-radius:50%; border:0; padding:0; background:#282826; opacity:.25; cursor:pointer; transition:opacity .15s; }
   .lb-dot.on { opacity:.85; }
   @media (max-width:900px) { .grid { grid-template-columns:repeat(2, 1fr); gap:20px; } .wrap { padding:40px 20px 64px; } .stage { aspect-ratio:4/5; } }
+  .top { display:flex; justify-content:space-between; align-items:center; margin-bottom:68px; }
+  .top .logo { margin-bottom:0; }
+  .vswitch { display:flex; gap:2px; padding:3px; border-radius:999px; background:rgba(40,40,38,.07); }
+  .vswitch button { border:0; background:transparent; font:500 13px/1 Inter, system-ui, sans-serif; color:#282826; padding:8px 14px; border-radius:999px; cursor:pointer; opacity:.55; transition:background .15s, opacity .15s; }
+  .vswitch button.on { background:#fff; opacity:1; box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  body[data-v="2"] { background:#fff; }
+  body[data-v="2"] .stage { background:#F2EFEA; }
+  body[data-v="1"] .grid[data-v="2"], body[data-v="2"] .grid[data-v="1"] { display:none; }
+  .grid[data-v="2"] .zoomtile, .grid[data-v="2"] .swapstack, .grid[data-v="2"] .tile3d { background:#F2EFEA; }
 </style>
 </head>
-<body>
+<body data-v="2">
 <div class="wrap">
-  <img class="logo" src="img/schellevis_logo.png" alt="Schellevis">
+  <header class="top"><img class="logo" src="img/schellevis_logo.png" alt="Schellevis">
+    <div class="vswitch" role="radiogroup" aria-label="Versie"><button data-v="1">V1</button><button data-v="2">V2</button></div></header>
 
-  <div class="grid">
+  <div class="grid" data-v="1">
     <figure><div class="zoomtile" style="--t:translate(-24.55%,-88.44%) scale(2.597)" data-hires="img/hires/zit100_sokkel_full.jpg img/hires/zit100_sokkel_detail.jpg"><img class="full" src="img/zit100_sokkel_full.jpg" alt="Zitelement op sokkel"><img class="detail" src="img/zit100_sokkel_detail.jpg" alt="Zitelement op sokkel, detail"><div class="swatches variants" role="radiogroup" aria-label="Variant"><button class="vt on" data-name="Zitelement op sokkel" data-meta="Scherpe randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg" data-full="img/zit100_sokkel_full.jpg" data-detail="img/zit100_sokkel_detail.jpg" data-hires="img/hires/zit100_sokkel_full.jpg img/hires/zit100_sokkel_detail.jpg">Scherp</button><button class="vt" data-name="Zitelement op sokkel" data-meta="Afgeronde randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg" data-full="img/zit100_sokkel_round_full.jpg" data-detail="img/zit100_sokkel_round_detail.jpg" data-hires="img/hires/zit100_sokkel_round_full.jpg img/hires/zit100_sokkel_round_detail.jpg">Rond</button><button class="vt" data-name="Zitelement" data-meta="Afgeronde randen · 100×60×40 cm · 520 kg" data-full="img/zit100_round_floor_full.jpg" data-detail="img/zit100_round_floor_detail.jpg" data-hires="img/hires/zit100_round_floor_full.jpg img/hires/zit100_round_floor_detail.jpg">Grond</button></div></div><figcaption><div class="name">Zitelement op sokkel</div><div class="meta">Scherpe randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg</div></figcaption></figure>
     <figure><div class="zoomtile" style="--t:translate(-73.33%,-96.33%) scale(3.333)" data-hires="img/hires/rond60_full.jpg img/hires/rond60_detail.jpg"><img class="full" src="img/rond60_full.jpg" alt="Rond zitelement 60"><img class="detail" src="img/rond60_detail.jpg" alt="Rond zitelement 60, detail"></div><figcaption><div class="name">Rond zitelement</div><div class="meta">Ø60×40 cm</div></figcaption></figure>
     <figure class="colortile">
@@ -92,6 +102,32 @@
     <figure><div class="zoomtile" data-hires="img/hires/slabstair.jpg" data-thumbs="img/slabstair.jpg"><img class="full" src="img/slab.jpg" alt="Grootformaat tegel 120x120x12"><img class="detail" src="img/slabstair.jpg" alt="Grootformaat tegels als zwevende tuintrap"></div><figcaption><div class="name">Grootformaat tegel</div><div class="meta">120×120×12 cm · 384 kg</div></figcaption></figure>
     <figure><div class="tile3d" id="tile3d" aria-label="Zitelement 200x60x40"></div><figcaption><div class="name">Zitelement</div><div class="meta">200×60×40 cm · 1040 kg</div></figcaption></figure>
   </div>
+  <div class="grid" data-v="2">
+    <figure><div class="zoomtile" style="--t:translate(-33.76%,-83.10%) scale(2.597)" data-hires="img/hires/zit100_persp_full.jpg img/hires/zit100_persp_detail.jpg"><img class="full" src="img/zit100_persp_full.jpg" alt="Zitelement op sokkel"><img class="detail" src="img/zit100_persp_detail.jpg" alt="Zitelement op sokkel, detail"><div class="swatches variants" role="radiogroup" aria-label="Variant"><button class="vt" data-name="Zitelement op sokkel" data-meta="Scherpe randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg" data-t="translate(-33.76%,-83.10%) scale(2.597)" data-full="img/zit100_sharp_persp_full.jpg" data-detail="img/zit100_sharp_persp_detail.jpg" data-hires="img/hires/zit100_sharp_persp_full.jpg img/hires/zit100_sharp_persp_detail.jpg">Scherp</button><button class="vt on" data-name="Zitelement op sokkel" data-meta="Afgeronde randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg" data-t="translate(-33.76%,-83.10%) scale(2.597)" data-full="img/zit100_persp_full.jpg" data-detail="img/zit100_persp_detail.jpg" data-hires="img/hires/zit100_persp_full.jpg img/hires/zit100_persp_detail.jpg">Rond</button><button class="vt" data-name="Zitelement" data-meta="Afgeronde randen · 100×60×40 cm · 520 kg" data-t="translate(-36.36%,-88.30%) scale(2.597)" data-full="img/zit100_floor_persp_full.jpg" data-detail="img/zit100_floor_persp_detail.jpg" data-hires="img/hires/zit100_floor_persp_full.jpg img/hires/zit100_floor_persp_detail.jpg">Grond</button></div></div><figcaption><div class="name">Zitelement op sokkel</div><div class="meta">Afgeronde randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg</div></figcaption></figure>
+    <figure><div class="zoomtile" style="--t:translate(-86.67%,-100.00%) scale(3.333)" data-hires="img/hires/rond60_persp_full.jpg img/hires/rond60_persp_detail.jpg"><img class="full" src="img/rond60_persp_full.jpg" alt="Rond zitelement 60"><img class="detail" src="img/rond60_persp_detail.jpg" alt="Rond zitelement 60, detail"></div><figcaption><div class="name">Rond zitelement</div><div class="meta">Ø60×40 cm</div></figcaption></figure>
+    <figure class="colortile">
+      <div class="swapstack" data-hires="img/hires/kubus_persp_grijs.jpg img/hires/kubus_persp_antraciet.jpg img/hires/kubus_persp_carbon.jpg img/hires/kubus_persp_creme.jpg img/hires/kubus_persp_roodbruin.jpg img/hires/kubus_persp_taupe.jpg">
+        <img class="on" data-c="grijs" src="img/kubus_persp_grijs.jpg" alt="Kubus 50x50x50, grijs">
+        <img data-c="antraciet" src="img/kubus_persp_antraciet.jpg" alt="Kubus 50x50x50, antraciet">
+        <img data-c="carbon" src="img/kubus_persp_carbon.jpg" alt="Kubus 50x50x50, carbon">
+        <img data-c="creme" src="img/kubus_persp_creme.jpg" alt="Kubus 50x50x50, crème">
+        <img data-c="roodbruin" src="img/kubus_persp_roodbruin.jpg" alt="Kubus 50x50x50, roodbruin">
+        <img data-c="taupe" src="img/kubus_persp_taupe.jpg" alt="Kubus 50x50x50, taupe">
+        <div class="swatches" role="radiogroup" aria-label="Kleur">
+          <button class="sw on" data-c="grijs" data-n="Grijs" style="--c:#9b9893" aria-label="Grijs"></button>
+          <button class="sw" data-c="antraciet" data-n="Antraciet" style="--c:#5f5f60" aria-label="Antraciet"></button>
+          <button class="sw" data-c="carbon" data-n="Carbon" style="--c:#2f2f30" aria-label="Carbon"></button>
+          <button class="sw" data-c="creme" data-n="Crème" style="--c:#ddd2c6" aria-label="Crème"></button>
+          <button class="sw" data-c="roodbruin" data-n="Roodbruin" style="--c:#7f5446" aria-label="Roodbruin"></button>
+          <button class="sw" data-c="taupe" data-n="Taupe" style="--c:#635852" aria-label="Taupe"></button>
+        </div>
+      </div>
+      <figcaption><div class="name">Kubus</div><div class="meta"><span class="cname">Grijs</span> · 50×50×50 cm · 280 kg</div></figcaption>
+    </figure>
+    <figure><div class="zoomtile" data-hires="img/hires/curve200_persp.jpg" data-thumbs="img/curve200_persp.jpg"><img class="full" src="img/curve200_persp.jpg" alt="Curve bank"><img class="detail" src="img/curve200_situ.jpg" alt="Curve bank in een tuin"></div><figcaption><div class="name">Curve bank</div><div class="meta">200×60×47,3 cm</div></figcaption></figure>
+    <figure><div class="zoomtile" data-hires="img/hires/slab_persp.jpg img/hires/slabstair_persp.jpg"><img class="full" src="img/slab_persp.jpg" alt="Grootformaat tegel 120x120x12"><img class="detail" src="img/slabstair_persp.jpg" alt="Grootformaat tegels als zwevende tuintrap"></div><figcaption><div class="name">Grootformaat tegel</div><div class="meta">120×120×12 cm · 384 kg</div></figcaption></figure>
+    <figure><div class="tile3d" id="tile3d_v2" aria-label="Zitelement 200x60x40"></div><figcaption><div class="name">Zitelement</div><div class="meta">200×60×40 cm · 1040 kg</div></figcaption></figure>
+  </div>
 
 </div>
 <div class="stage" id="stage"><div class="loading" id="loading">3D-model laden…</div></div>
@@ -108,6 +144,7 @@ document.querySelectorAll('.variants').forEach(g => {   // placement switch (sok
     b.addEventListener('click', e => { e.stopPropagation();
       g.querySelectorAll('.vt').forEach(x => x.classList.toggle('on', x === b));
       full.src = b.dataset.full; det.src = b.dataset.detail; tile.dataset.hires = b.dataset.hires;
+      if (b.dataset.t) tile.style.setProperty('--t', b.dataset.t);
       const cap = tile.closest('figure').querySelector('figcaption');
       if (b.dataset.name) cap.querySelector('.name').textContent = b.dataset.name;
       if (b.dataset.meta) cap.querySelector('.meta').textContent = b.dataset.meta; });
@@ -194,18 +231,19 @@ const scene = new THREE.Scene();
 
 // lighting and the floor shadow are baked in Cycles (same studio as the renders); nothing is lit live
 
-// cameras: parallel (orthographic) like the renders, or perspective
+// cameras: V1 = parallel (orthographic) like the isometric renders; V2 (2026-11-27) = perspective like the V2 stills
+//   (az 30, el 18, 100 mm lens on 36 mm -> 20.4 deg vertical FOV). Follows the V1/V2 switch (event 'versionchange').
 const target = new THREE.Vector3(0, 0.2, 0);
-const homeDir = new THREE.Vector3(Math.sin(THREE.MathUtils.degToRad(28)) * Math.cos(THREE.MathUtils.degToRad(30)),
-                                  Math.sin(THREE.MathUtils.degToRad(30)),
-                                  Math.cos(THREE.MathUtils.degToRad(28)) * Math.cos(THREE.MathUtils.degToRad(30)));
+const VIEWS = { '1': { az: 28, el: 30 }, '2': { az: 30, el: 18 } };
+const homeDir = new THREE.Vector3();
 const ortho = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 100);
-const persp = new THREE.PerspectiveCamera(30, 1, 0.01, 100);
-let camera = ortho, controls;
+const persp = new THREE.PerspectiveCamera(2 * Math.atan(18 / 100) * 180 / Math.PI, 1, 0.05, 200);
+let camera = ortho, controls, view = '1';
 // fixed framing: measure the bench's projected size from the home view, then keep it ~70% of the width
-
-let projW = 2, projH = 1;
-{
+let projW = 2, projH = 1, frameH = 2;
+function measure() {
+  const v = VIEWS[view], az = THREE.MathUtils.degToRad(v.az), el = THREE.MathUtils.degToRad(v.el);
+  homeDir.set(Math.sin(az) * Math.cos(el), Math.sin(el), Math.cos(az) * Math.cos(el));
   const m = new THREE.Matrix4().lookAt(homeDir, new THREE.Vector3(), new THREE.Vector3(0, 1, 0)).invert();
   const xs = [], ys = [];
   for (const x of [-1, 1]) for (const y of [0, 0.473]) for (const z of [-0.3, 0.343]) {
@@ -217,13 +255,14 @@ let projW = 2, projH = 1;
 function size() {
   const w = stage.clientWidth, h = stage.clientHeight, a = w / h;
   renderer.setSize(w, h, false);
-  const H = Math.max(projH / 0.5, projW / 0.70 / a);
-  ortho.left = -H * a / 2; ortho.right = H * a / 2; ortho.top = H / 2; ortho.bottom = -H / 2;
+  frameH = Math.max(projH / 0.5, projW / 0.70 / a);
+  ortho.left = -frameH * a / 2; ortho.right = frameH * a / 2; ortho.top = frameH / 2; ortho.bottom = -frameH / 2;
   ortho.updateProjectionMatrix();
   persp.aspect = a; persp.updateProjectionMatrix();
 }
 function home(cam) {
-  cam.position.copy(target).addScaledVector(homeDir, cam.isOrthographicCamera ? 20 : 3.9);
+  const d = cam.isOrthographicCamera ? 20 : frameH / 2 / Math.tan(THREE.MathUtils.degToRad(persp.fov) / 2);
+  cam.position.copy(target).addScaledVector(homeDir, d);
   if (cam.isOrthographicCamera) cam.zoom = 1;
   cam.lookAt(target); cam.updateProjectionMatrix();
 }
@@ -238,7 +277,9 @@ function useCamera(cam) {
   controls.enableZoom = false;   // fixed zoom; the mouse wheel scrolls the page
   controls.update();
 }
-size(); home(ortho); home(persp); useCamera(ortho);
+function setView(v) { view = v === '1' ? '1' : '2'; measure(); size(); const cam = view === '1' ? ortho : persp; home(cam); useCamera(cam); }
+setView(document.body.dataset.v);
+addEventListener('versionchange', () => setView(document.body.dataset.v));
 addEventListener('resize', size);
 new ResizeObserver(size).observe(stage);
 
@@ -322,31 +363,37 @@ const viewScene = new THREE.Scene();
 document.getElementById('loading').remove();
 
 
-// ---- Zitelement tile: same baked scene, parallel camera framed like the still; hover = subtle camera move
-{
-  const el = document.getElementById('tile3d');
+// ---- Zitelement tiles: same baked scene; hover = subtle camera move.
+//   V1: parallel camera framed like the isometric still. V2 (2026-11-27): perspective camera framed like the V2 stills
+//   (Blender: az 30, el 18, 100 mm lens on 36 mm -> vertical FOV 20.4 deg, distance 11.45 m), background #F2EFEA via CSS.
+function liveTile(el, persp) {
+  if (!el) return;
   const TILE_EXPOSURE = 3.25;   // matched to the Cycles tiles (face-by-face)
   const r2 = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   r2.setPixelRatio(Math.min(devicePixelRatio, 2));
   r2.outputColorSpace = THREE.SRGBColorSpace; r2.toneMapping = THREE.AgXToneMapping; r2.toneMappingExposure = TILE_EXPOSURE;   // matched to the Cycles stills next to it
   el.appendChild(r2.domElement);
-  const cam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 100);
-  const FRAME_H = 4.128;                       // metres of scene height in the 4:5 still (Blender ortho scale)
-  const A0 = { az: 28, el: 30 }, A1 = { az: 52, el: 16 };   // stronger swing right + lower
+  const FOV = 2 * Math.atan(18 / 100) * 180 / Math.PI, DIST = 11.447;
+  const cam = persp ? new THREE.PerspectiveCamera(FOV, 0.8, 0.1, 200) : new THREE.OrthographicCamera(-1, 1, 1, -1, 0.01, 100);
+  const FRAME_H = 4.128;                       // V1: metres of scene height in the 4:5 still (Blender ortho scale)
+  const A0 = persp ? { az: 30, el: 18 } : { az: 28, el: 30 }, A1 = persp ? { az: 52, el: 10 } : { az: 52, el: 16 };   // swing right + lower
   let p = 0, from = 0, to = 0, t0 = 0, anim = false;
   const DUR = 700, ease = x => 1 - Math.pow(1 - x, 5);   // snappy start, long inertial settle at the end
   const ZOOM_H = 3.0;                           // hover: frame tightens (~27%)
   let aspect = 0.8;
-  function frustum(k) { const H = FRAME_H + (ZOOM_H - FRAME_H) * k; cam.top = H / 2; cam.bottom = -H / 2; cam.left = -H * aspect / 2; cam.right = H * aspect / 2; cam.updateProjectionMatrix(); }
+  function frustum(k) {
+    if (persp) { cam.aspect = aspect; cam.fov = aspect >= 1 ? FOV / aspect : FOV; cam.updateProjectionMatrix(); return; }
+    const H = FRAME_H + (ZOOM_H - FRAME_H) * k; cam.top = H / 2; cam.bottom = -H / 2; cam.left = -H * aspect / 2; cam.right = H * aspect / 2; cam.updateProjectionMatrix(); }
   function place(k) {
     frustum(k);
     const az = THREE.MathUtils.degToRad(A0.az + (A1.az - A0.az) * k), elv = THREE.MathUtils.degToRad(A0.el + (A1.el - A0.el) * k);
-    cam.position.set(Math.sin(az) * Math.cos(elv), Math.sin(elv), Math.cos(az) * Math.cos(elv)).multiplyScalar(20).add(target);
+    const d = persp ? DIST * (1 + (ZOOM_H / FRAME_H - 1) * k) : 20;
+    cam.position.set(Math.sin(az) * Math.cos(elv), Math.sin(elv), Math.cos(az) * Math.cos(elv)).multiplyScalar(d).add(target);
     cam.lookAt(target);
   }
   function fit() {
-    const w = el.clientWidth, h = el.clientHeight; aspect = w / h;
-    r2.setSize(w, h, false); frustum(p); r2.render(scene, cam);
+    const w = el.clientWidth, h = el.clientHeight; if (!w || !h) return; aspect = w / h;
+    r2.setSize(w, h, false); place(p); r2.render(scene, cam);
   }
   function loop(now) {
     const k = Math.min(1, (now - t0) / (DUR * Math.max(Math.abs(to - from), 0.01)));
@@ -357,13 +404,25 @@ document.getElementById('loading').remove();
   place(0); new ResizeObserver(fit).observe(el); fit();
   el.addEventListener('mouseenter', () => go(1));
   el.addEventListener('mouseleave', () => go(0));
-  // re-render once textures have arrived
-  THREE.DefaultLoadingManager.onLoad = () => r2.render(scene, cam);
+  const prev = THREE.DefaultLoadingManager.onLoad;   // re-render once textures have arrived
+  THREE.DefaultLoadingManager.onLoad = () => { prev && prev(); r2.render(scene, cam); };
   setTimeout(() => r2.render(scene, cam), 1500);
 }
+liveTile(document.getElementById('tile3d'), false);
+liveTile(document.getElementById('tile3d_v2'), true);
 
 renderer.setAnimationLoop(() => { controls.update(); renderer.render(viewScene, camera); });
 </script>
 
+<script>
+(() => {   // V1 (isometric, grey gradient) / V2 (low perspective, #F2EFEA) switch; remembered per viewer, #v1 / #v2 in the URL wins
+  let v = location.hash === '#v1' ? '1' : location.hash === '#v2' ? '2' : null;
+  if (!v) { try { v = localStorage.getItem('schellevis_v'); } catch (e) {} }
+  const set = (x) => { document.body.dataset.v = x; dispatchEvent(new Event('versionchange')); document.querySelectorAll('.vswitch button').forEach(b => b.classList.toggle('on', b.dataset.v === x));
+    try { localStorage.setItem('schellevis_v', x); } catch (e) {} };
+  document.querySelectorAll('.vswitch button').forEach(b => b.addEventListener('click', () => set(b.dataset.v)));
+  set(v === '1' ? '1' : '2');
+})();
+</script>
 </body>
 </html>
