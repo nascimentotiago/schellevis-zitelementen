@@ -33,7 +33,7 @@
             background:linear-gradient(to bottom, rgb(127,126,120) 0%, rgb(153,153,149) 22%, rgb(185,183,180) 45%,
             rgb(205,203,200) 60%, rgb(221,220,216) 75%, rgb(228,226,224) 90%, rgb(228,227,225) 100%); }
   .tile3d canvas { display:block; width:100%; height:100%; }
-  #tile3d canvas, #tile3d_v2 canvas { filter: contrast(0.79) brightness(1.14); }   /* tone-match the live bench to the Cycles tiles (fitted per face) */
+  #tile3d canvas, #tile3d_v2 canvas, #tile3d_v3 canvas { filter: contrast(0.79) brightness(1.14); }   /* tone-match the live bench to the Cycles tiles (fitted per face) */
   figcaption { padding:16px 2px 0; }
   .name { font-size:17px; font-weight:500; }
   .meta { font-size:14px; color:#78786f; margin-top:4px; }
@@ -65,16 +65,18 @@
   .vswitch { display:flex; gap:2px; padding:3px; border-radius:999px; background:rgba(40,40,38,.07); }
   .vswitch button { border:0; background:transparent; font:500 13px/1 Inter, system-ui, sans-serif; color:#282826; padding:8px 14px; border-radius:999px; cursor:pointer; opacity:.55; transition:background .15s, opacity .15s; }
   .vswitch button.on { background:#fff; opacity:1; box-shadow:0 1px 2px rgba(0,0,0,.08); }
-  body[data-v="2"] { background:#fff; }
+  body[data-v="2"], body[data-v="3"] { background:#fff; }
+  body[data-v="3"] .stage { background:#F4F6F9; }
+  .grid[data-v="3"] .zoomtile, .grid[data-v="3"] .swapstack, .grid[data-v="3"] .tile3d { background:#F4F6F9; }
   body[data-v="2"] .stage { background:#F2EFEA; }
-  body[data-v="1"] .grid[data-v="2"], body[data-v="2"] .grid[data-v="1"] { display:none; }
+  body[data-v="1"] .grid:not([data-v="1"]), body[data-v="2"] .grid:not([data-v="2"]), body[data-v="3"] .grid:not([data-v="3"]) { display:none; }
   .grid[data-v="2"] .zoomtile, .grid[data-v="2"] .swapstack, .grid[data-v="2"] .tile3d { background:#F2EFEA; }
 </style>
 </head>
 <body data-v="2">
 <div class="wrap">
   <header class="top"><img class="logo" src="img/schellevis_logo.png" alt="Schellevis">
-    <div class="vswitch" role="radiogroup" aria-label="Versie"><button data-v="1">V1</button><button data-v="2">V2</button></div></header>
+    <div class="vswitch" role="radiogroup" aria-label="Versie"><button data-v="1">V1</button><button data-v="2">V2</button><button data-v="3">V3</button></div></header>
 
   <div class="grid" data-v="1">
     <figure><div class="zoomtile" style="--t:translate(-24.55%,-88.44%) scale(2.597)" data-hires="img/hires/zit100_sokkel_full.jpg img/hires/zit100_sokkel_detail.jpg"><img class="full" src="img/zit100_sokkel_full.jpg" alt="Zitelement op sokkel"><img class="detail" src="img/zit100_sokkel_detail.jpg" alt="Zitelement op sokkel, detail"><div class="swatches variants" role="radiogroup" aria-label="Variant"><button class="vt on" data-name="Zitelement op sokkel" data-meta="Scherpe randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg" data-full="img/zit100_sokkel_full.jpg" data-detail="img/zit100_sokkel_detail.jpg" data-hires="img/hires/zit100_sokkel_full.jpg img/hires/zit100_sokkel_detail.jpg">Scherp</button><button class="vt" data-name="Zitelement op sokkel" data-meta="Afgeronde randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg" data-full="img/zit100_sokkel_round_full.jpg" data-detail="img/zit100_sokkel_round_detail.jpg" data-hires="img/hires/zit100_sokkel_round_full.jpg img/hires/zit100_sokkel_round_detail.jpg">Rond</button><button class="vt" data-name="Zitelement" data-meta="Afgeronde randen · 100×60×40 cm · 520 kg" data-full="img/zit100_round_floor_full.jpg" data-detail="img/zit100_round_floor_detail.jpg" data-hires="img/hires/zit100_round_floor_full.jpg img/hires/zit100_round_floor_detail.jpg">Grond</button></div></div><figcaption><div class="name">Zitelement op sokkel</div><div class="meta">Scherpe randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg</div></figcaption></figure>
@@ -127,6 +129,32 @@
     <figure><div class="zoomtile" data-hires="img/hires/curve200_persp.jpg" data-thumbs="img/curve200_persp.jpg"><img class="full" src="img/curve200_persp.jpg" alt="Curve bank"><img class="detail" src="img/curve200_situ.jpg" alt="Curve bank in een tuin"></div><figcaption><div class="name">Curve bank</div><div class="meta">200×60×47,3 cm</div></figcaption></figure>
     <figure><div class="zoomtile" data-hires="img/hires/slab_persp.jpg img/hires/slabstair_persp.jpg"><img class="full" src="img/slab_persp.jpg" alt="Grootformaat tegel 120x120x12"><img class="detail" src="img/slabstair_persp.jpg" alt="Grootformaat tegels als zwevende tuintrap"></div><figcaption><div class="name">Grootformaat tegel</div><div class="meta">120×120×12 cm · 384 kg</div></figcaption></figure>
     <figure><div class="tile3d" id="tile3d_v2" aria-label="Zitelement 200x60x40"></div><figcaption><div class="name">Zitelement</div><div class="meta">200×60×40 cm · 1040 kg</div></figcaption></figure>
+  </div>
+  <div class="grid" data-v="3">
+    <figure><div class="zoomtile" style="--t:translate(-33.76%,-83.10%) scale(2.597)" data-hires="img/hires/zit100_persp_full_v3.jpg img/hires/zit100_persp_detail_v3.jpg"><img class="full" src="img/zit100_persp_full_v3.jpg" alt="Zitelement op sokkel"><img class="detail" src="img/zit100_persp_detail_v3.jpg" alt="Zitelement op sokkel, detail"><div class="swatches variants" role="radiogroup" aria-label="Variant"><button class="vt" data-name="Zitelement op sokkel" data-meta="Scherpe randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg" data-t="translate(-33.76%,-83.10%) scale(2.597)" data-full="img/zit100_sharp_persp_full_v3.jpg" data-detail="img/zit100_sharp_persp_detail_v3.jpg" data-hires="img/hires/zit100_sharp_persp_full_v3.jpg img/hires/zit100_sharp_persp_detail_v3.jpg">Scherp</button><button class="vt on" data-name="Zitelement op sokkel" data-meta="Afgeronde randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg" data-t="translate(-33.76%,-83.10%) scale(2.597)" data-full="img/zit100_persp_full_v3.jpg" data-detail="img/zit100_persp_detail_v3.jpg" data-hires="img/hires/zit100_persp_full_v3.jpg img/hires/zit100_persp_detail_v3.jpg">Rond</button><button class="vt" data-name="Zitelement" data-meta="Afgeronde randen · 100×60×40 cm · 520 kg" data-t="translate(-36.36%,-88.30%) scale(2.597)" data-full="img/zit100_floor_persp_full_v3.jpg" data-detail="img/zit100_floor_persp_detail_v3.jpg" data-hires="img/hires/zit100_floor_persp_full_v3.jpg img/hires/zit100_floor_persp_detail_v3.jpg">Grond</button></div></div><figcaption><div class="name">Zitelement op sokkel</div><div class="meta">Afgeronde randen · 100×60×40 + 90×50×15 cm · 520 + 151 kg</div></figcaption></figure>
+    <figure><div class="zoomtile" style="--t:translate(-86.67%,-100.00%) scale(3.333)" data-hires="img/hires/rond60_persp_full_v3.jpg img/hires/rond60_persp_detail_v3.jpg"><img class="full" src="img/rond60_persp_full_v3.jpg" alt="Rond zitelement 60"><img class="detail" src="img/rond60_persp_detail_v3.jpg" alt="Rond zitelement 60, detail"></div><figcaption><div class="name">Rond zitelement</div><div class="meta">Ø60×40 cm</div></figcaption></figure>
+    <figure class="colortile">
+      <div class="swapstack" data-hires="img/hires/kubus_persp_grijs_v3.jpg img/hires/kubus_persp_antraciet_v3.jpg img/hires/kubus_persp_carbon_v3.jpg img/hires/kubus_persp_creme_v3.jpg img/hires/kubus_persp_roodbruin_v3.jpg img/hires/kubus_persp_taupe_v3.jpg">
+        <img class="on" data-c="grijs" src="img/kubus_persp_grijs_v3.jpg" alt="Kubus 50x50x50, grijs">
+        <img data-c="antraciet" src="img/kubus_persp_antraciet_v3.jpg" alt="Kubus 50x50x50, antraciet">
+        <img data-c="carbon" src="img/kubus_persp_carbon_v3.jpg" alt="Kubus 50x50x50, carbon">
+        <img data-c="creme" src="img/kubus_persp_creme_v3.jpg" alt="Kubus 50x50x50, crème">
+        <img data-c="roodbruin" src="img/kubus_persp_roodbruin_v3.jpg" alt="Kubus 50x50x50, roodbruin">
+        <img data-c="taupe" src="img/kubus_persp_taupe_v3.jpg" alt="Kubus 50x50x50, taupe">
+        <div class="swatches" role="radiogroup" aria-label="Kleur">
+          <button class="sw on" data-c="grijs" data-n="Grijs" style="--c:#9b9893" aria-label="Grijs"></button>
+          <button class="sw" data-c="antraciet" data-n="Antraciet" style="--c:#5f5f60" aria-label="Antraciet"></button>
+          <button class="sw" data-c="carbon" data-n="Carbon" style="--c:#2f2f30" aria-label="Carbon"></button>
+          <button class="sw" data-c="creme" data-n="Crème" style="--c:#ddd2c6" aria-label="Crème"></button>
+          <button class="sw" data-c="roodbruin" data-n="Roodbruin" style="--c:#7f5446" aria-label="Roodbruin"></button>
+          <button class="sw" data-c="taupe" data-n="Taupe" style="--c:#635852" aria-label="Taupe"></button>
+        </div>
+      </div>
+      <figcaption><div class="name">Kubus</div><div class="meta"><span class="cname">Grijs</span> · 50×50×50 cm · 280 kg</div></figcaption>
+    </figure>
+    <figure><div class="zoomtile" data-hires="img/hires/curve200_persp_v3.jpg" data-thumbs="img/curve200_persp_v3.jpg"><img class="full" src="img/curve200_persp_v3.jpg" alt="Curve bank"><img class="detail" src="img/curve200_situ.jpg" alt="Curve bank in een tuin"></div><figcaption><div class="name">Curve bank</div><div class="meta">200×60×47,3 cm</div></figcaption></figure>
+    <figure><div class="zoomtile" data-hires="img/hires/slab_persp_v3.jpg img/hires/slabstair_persp_v3.jpg"><img class="full" src="img/slab_persp_v3.jpg" alt="Grootformaat tegel 120x120x12"><img class="detail" src="img/slabstair_persp_v3.jpg" alt="Grootformaat tegels als zwevende tuintrap"></div><figcaption><div class="name">Grootformaat tegel</div><div class="meta">120×120×12 cm · 384 kg</div></figcaption></figure>
+    <figure><div class="tile3d" id="tile3d_v3" aria-label="Zitelement 200x60x40"></div><figcaption><div class="name">Zitelement</div><div class="meta">200×60×40 cm · 1040 kg</div></figcaption></figure>
   </div>
 
 </div>
@@ -410,18 +438,19 @@ function liveTile(el, persp) {
 }
 liveTile(document.getElementById('tile3d'), false);
 liveTile(document.getElementById('tile3d_v2'), true);
+liveTile(document.getElementById('tile3d_v3'), true);
 
 renderer.setAnimationLoop(() => { controls.update(); renderer.render(viewScene, camera); });
 </script>
 
 <script>
-(() => {   // V1 (isometric, grey gradient) / V2 (low perspective, #F2EFEA) switch; remembered per viewer, #v1 / #v2 in the URL wins
-  let v = location.hash === '#v1' ? '1' : location.hash === '#v2' ? '2' : null;
+(() => {   // V1 (isometric, grey gradient) / V2 (low perspective, #F2EFEA) / V3 (same, #F4F6F9) switch; remembered per viewer, #v1 / #v2 in the URL wins
+  let v = ['#v1', '#v2', '#v3'].includes(location.hash) ? location.hash.slice(2) : null;
   if (!v) { try { v = localStorage.getItem('schellevis_v'); } catch (e) {} }
   const set = (x) => { document.body.dataset.v = x; dispatchEvent(new Event('versionchange')); document.querySelectorAll('.vswitch button').forEach(b => b.classList.toggle('on', b.dataset.v === x));
     try { localStorage.setItem('schellevis_v', x); } catch (e) {} };
   document.querySelectorAll('.vswitch button').forEach(b => b.addEventListener('click', () => set(b.dataset.v)));
-  set(v === '1' ? '1' : '2');
+  set(['1', '2', '3'].includes(v) ? v : '2');
 })();
 </script>
 </body>
